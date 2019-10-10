@@ -18,7 +18,30 @@ public static class Task
             Console.SetOut(stdOutWriter);
             Console.SetError(stdErrWriter);
             
-            string[] args = Command.Split(' ');
+            List<string> tempList = new List<string>();
+            int spaceIndex = Command.IndexOf(" ");
+            int quoteIndex = Command.IndexOf("\"");
+            while (spaceIndex != -1 || quoteIndex != -1 ){
+                string extractedString = "";
+                if (spaceIndex < quoteIndex || quoteIndex == -1){
+                    extractedString = Command.Substring(0,spaceIndex);
+                    Command = Command.Substring(spaceIndex + 1);
+                } else {
+                    int tempSpaceIndex = Command.IndexOf(" ");
+                    int nextQuoteIndex = Command.IndexOf("\"",quoteIndex);
+                    while(tempSpaceIndex < nextQuoteIndex){
+                        tempSpaceIndex = Command.IndexOf(" ", tempSpaceIndex);
+                    }
+                    extractedString = Command.Substring(0,tempSpaceIndex);
+                    Command = Command.Substring(tempSpaceIndex + 1);
+                }
+                tempList.Add(extractedString);
+                spaceIndex = Command.IndexOf(" ");
+                quoteIndex = Command.IndexOf("\"");
+            }
+            tempList.Add(testString);
+            string[] args = list.ToArray();
+            
             typeof(Program).GetMethod("Main", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { args });
             
             Console.Out.Flush();
